@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 GeyserMC. http://geysermc.org
+ * Copyright (c) 2019-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,22 +23,36 @@
  * @link https://github.com/GeyserMC/Geyser
  */
 
-package org.geysermc.geyser.platform.viaproxy;
+package org.geysermc.geyser.network;
 
-import org.geysermc.geyser.GeyserMain;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import lombok.RequiredArgsConstructor;
+import org.geysermc.geyser.session.GeyserSession;
 
-public class GeyserViaProxyMain extends GeyserMain {
+import java.util.stream.Stream;
 
-    public static void main(String[] args) {
-        new GeyserViaProxyMain().displayMessage();
+@RequiredArgsConstructor
+public class InvalidPacketHandler extends ChannelInboundHandlerAdapter {
+    public static final String NAME = "rak-error-handler";
+
+    private final GeyserSession session;
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        Throwable rootCause = Stream.iterate(cause, Throwable::getCause)
+                .filter(element -> element.getCause() == null)
+                .findFirst()
+                .orElse(cause);
+
+
+        if (!(rootCause instanceof IllegalArgumentException)) {
+            super.exceptionCaught(ctx, cause);
+            return;
+        }
+
+        // Kick users that try to send illegal packets
+        session.getGeyser().getLogger().warning(rootCause.getMessage());
+        session.disconnect("Invalid packet received!");
     }
-
-    public String getPluginType() {
-        return "ViaProxy";
-    }
-
-    public String getPluginFolder() {
-        return "plugins";
-    }
-
 }
