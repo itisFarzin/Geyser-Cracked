@@ -1,3 +1,4 @@
+## This is a fork that removed the requirement of being login into Xbox account for joining to a server
 <img src="https://geysermc.org/img/geyser-1760-860.png" alt="Geyser" width="600"/>
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
