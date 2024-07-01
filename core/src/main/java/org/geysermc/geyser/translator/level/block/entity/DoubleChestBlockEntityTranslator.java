@@ -39,7 +39,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType
  */
 @BlockEntity(type = { BlockEntityType.CHEST, BlockEntityType.TRAPPED_CHEST })
 public class DoubleChestBlockEntityTranslator extends BlockEntityTranslator implements RequiresBlockState {
-
     @Override
     public void translateTag(GeyserSession session, NbtMapBuilder bedrockNbt, NbtMap javaNbt, BlockState blockState) {
         if (blockState.getValue(Properties.CHEST_TYPE) != ChestType.SINGLE) {
